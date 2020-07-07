@@ -2,11 +2,9 @@ package com.matrix.pleymeplayer.player
 
 import android.animation.Animator
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
@@ -15,31 +13,22 @@ import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.SeekBar
-import androidx.annotation.MainThread
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.postDelayed
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
-import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.Timeline
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.matrix.pleymeplayer.R
 import com.matrix.pleymeplayer.player.util.TimeFormat
 import com.matrix.pleymeplayer.player.util.TimeObject
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.pleyme_player.view.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+
+
 
 @Suppress("IMPLICIT_CAST_TO_ANY")
 class PleymePlayer @JvmOverloads constructor(
@@ -64,7 +53,6 @@ class PleymePlayer @JvmOverloads constructor(
     get() = field
     set(value){
         field = value
-        Log.d("set activity","yeah")
         activityOwner?.lifecycle?.addObserver(this)
     }
 
