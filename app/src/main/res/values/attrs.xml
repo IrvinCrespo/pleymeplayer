@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="PleymePlayer">
+
+        <attr name="showOptions" format="boolean" />
+        <attr name="showCurrentTime" format="boolean" />
+        <attr name="showTotalTime" format="boolean" />
+        <attr name="showNextButton" format="boolean" />
+        <attr name="showPrevButton" format="boolean" />
+
+        <attr name="resizeMode">
+            <flag name="fit" value="0" />
+            <flag name="fixed_width" value="1" />
+            <flag name="fixed_height" value="2" />
+            <flag name="fill" value="3" />
+            <flag name="zoom" value="4" />
+        </attr>
+
+        <attr name="labelPosition" format="enum">
+            <enum name="left" value="0"/>
+            <enum name="right" value="1"/>
+        </attr>
+
+    </declare-styleable>
+
+</resources>
