@@ -9,6 +9,9 @@
         <attr name="showNextButton" format="boolean" />
         <attr name="showPrevButton" format="boolean" />
 
+        <attr name="showLiveTag" format="boolean" />
+        <attr name="showProgress" format="boolean" />
+
         <attr name="resizeMode">
             <flag name="fit" value="0" />
             <flag name="fixed_width" value="1" />

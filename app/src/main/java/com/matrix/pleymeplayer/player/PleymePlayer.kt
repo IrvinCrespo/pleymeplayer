@@ -11,6 +11,7 @@ import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
@@ -19,8 +20,10 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.matrix.pleymeplayer.R
@@ -36,7 +39,7 @@ class PleymePlayer @JvmOverloads constructor(
 ) : LinearLayout(context, attrs, defStyleAttr),
     Player.EventListener, LifecycleObserver, SeekBar.OnSeekBarChangeListener {
 
-    private lateinit var player : SimpleExoPlayer
+    private var player : SimpleExoPlayer = SimpleExoPlayer.Builder(context).build()
 
     var timer:TimeObject? = null
     var controlsListener : PleymePlayerControlsListener? = null
@@ -54,6 +57,7 @@ class PleymePlayer @JvmOverloads constructor(
     set(value){
         field = value
         activityOwner?.lifecycle?.addObserver(this)
+        activityOwner?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     var lifeCyclePlayer:Lifecycle? = null
@@ -76,15 +80,38 @@ class PleymePlayer @JvmOverloads constructor(
         field = value
         next.visibility = if (field) View.VISIBLE else View.INVISIBLE
     }
-
+    
     var showPrev: Boolean = true
     get() = field
     set(value){
         field = value
         prev.visibility = if (field) View.VISIBLE else View.INVISIBLE
     }
+
+    var showLiveTag: Boolean = false
+    get() = field
+    set(value){
+        field = value
+        live_tag.visibility = if (field) View.VISIBLE else View.INVISIBLE
+    }
+
+    var showProgress: Boolean = false
+    get() = field
+    set(value){
+        field = value
+        seek.visibility = if (field) View.VISIBLE else View.INVISIBLE
+    }
+
+    var repeat : Boolean = false
+    get() = field
+    set(value){
+        field = value
+        player.repeatMode = if(field) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
+    }
+
     //var url480= "https://playmeweb.s3.us-east-2.amazonaws.com/private/videos/streaming480/Steven_Universe_cap_7_Sub_Espa%C3%B1olstream480.m3u8"
-    var url480 = "https://d1anetxzb8te48.cloudfront.net/private/videos/streaming480/425c59d1-8687-414f-8ac5-bb8c4e919631/425c59d1-8687-414f-8ac5-bb8c4e919631.m3u8?Expires=1593975654&Signature=GLbl74atTcHhZ4I7GqzrtliJ6AQx7k~BFQXXQBC5SzGy-qcwPOo5D0BmVKILSqgjI1n2L2n8IyUsmnJu633DO~nKy5EdP8KxSUHzKo9IXZSnHvBku~WiIKpjaKgfHugLAR6G5LmEXNacuSKGDbVrK1QP9DK1612ouQLn5egk5QcRY1xUNGr0GuY~CVCQAYcjk8bsiqcHylhseGIr5svyXOrF~zJ6gp8siiYnh~3h1nI4qrzB6Z6aF2-Dk70keqQf9IuA7~jtMGCj~yWtcGp~YHCyozl1xegj~Helyig5H11moNDxgJRPyjX-cguAjlB8XhC7sldBj9RKbpceg~xlTA__&Key-Pair-Id=APKAJADXE67QLYOKBFZA"
+    //var url480 = "https://d1anetxzb8te48.cloudfront.net/private/videos/streaming480/425c59d1-8687-414f-8ac5-bb8c4e919631/425c59d1-8687-414f-8ac5-bb8c4e919631.m3u8?Expires=1593975654&Signature=GLbl74atTcHhZ4I7GqzrtliJ6AQx7k~BFQXXQBC5SzGy-qcwPOo5D0BmVKILSqgjI1n2L2n8IyUsmnJu633DO~nKy5EdP8KxSUHzKo9IXZSnHvBku~WiIKpjaKgfHugLAR6G5LmEXNacuSKGDbVrK1QP9DK1612ouQLn5egk5QcRY1xUNGr0GuY~CVCQAYcjk8bsiqcHylhseGIr5svyXOrF~zJ6gp8siiYnh~3h1nI4qrzB6Z6aF2-Dk70keqQf9IuA7~jtMGCj~yWtcGp~YHCyozl1xegj~Helyig5H11moNDxgJRPyjX-cguAjlB8XhC7sldBj9RKbpceg~xlTA__&Key-Pair-Id=APKAJADXE67QLYOKBFZA"
+    var url480 = ""
     var url720 = "https://playmeweb.s3.us-east-2.amazonaws.com/private/videos/streaming/Steven_Universe_cap_7_Sub_Espa%C3%B1olstream720.m3u8"
 
     private var handlerProgress = Handler(Looper.getMainLooper())
@@ -114,7 +141,7 @@ class PleymePlayer @JvmOverloads constructor(
     init {
         View.inflate(context, R.layout.pleyme_player,this)
         setupAttrs(attrs)
-        setupHLS()
+
         seek.setOnSeekBarChangeListener(this)
 
         options.setOnClickListener { controlsListener?.onOptionsClicked() }
@@ -176,7 +203,7 @@ class PleymePlayer @JvmOverloads constructor(
             else if(currentOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                 activityOwner?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
-            Handler().postDelayed(Runnable {
+            Handler().postDelayed({
                 activityOwner?.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
             },5000)
 
@@ -189,15 +216,18 @@ class PleymePlayer @JvmOverloads constructor(
         val currentTimeAttr = attributes.getBoolean(R.styleable.PleymePlayer_showCurrentTime,true)
         val totalTimeAttr = attributes.getBoolean(R.styleable.PleymePlayer_showTotalTime,true)
         val optionsAttr = attributes.getBoolean(R.styleable.PleymePlayer_showOptions,true)
-
         val nextAttr = attributes.getBoolean(R.styleable.PleymePlayer_showNextButton,true)
         val prevAttr = attributes.getBoolean(R.styleable.PleymePlayer_showPrevButton,true)
+        val liveTagAttr = attributes.getBoolean(R.styleable.PleymePlayer_showLiveTag,true)
+        val progressAttr = attributes.getBoolean(R.styleable.PleymePlayer_showProgress,true)
 
-        currentTime.visibility = if(currentTimeAttr) View.VISIBLE else View.INVISIBLE
-        durationTime.visibility = if(totalTimeAttr) View.VISIBLE else View.INVISIBLE
-        options.visibility = if(optionsAttr) View.VISIBLE else View.INVISIBLE
-        next.visibility = if(optionsAttr) View.VISIBLE else View.INVISIBLE
-        prev.visibility = if(prevAttr) View.VISIBLE else View.INVISIBLE
+        currentTime.visibility = isVisible(currentTimeAttr)
+        durationTime.visibility = isVisible(totalTimeAttr)
+        options.visibility = isVisible(optionsAttr)
+        next.visibility = isVisible(nextAttr)
+        prev.visibility = isVisible(prevAttr)
+        live_tag.visibility = isVisible(liveTagAttr)
+        seek.visibility = isVisible(progressAttr)
 
         attributes.recycle()
     }
@@ -230,19 +260,22 @@ class PleymePlayer @JvmOverloads constructor(
             player.playWhenReady = true
         }
     }
-
+    
     fun setupMedia(){
-        /*
-        var dataSourceFactory = DefaultDataSourceFactory(
+        val dataSourceFactory = DefaultDataSourceFactory(
             context,Util.getUserAgent(context,"peyme"))
 
-        var mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
-            .createMediaSource(Uri.parse("https://playmeweb.s3.us-east-2.amazonaws.com/private/videos/streaming/Steven_Universe_cap_7_Sub_Espa%C3%B1olstream720.m3u8"))
-        */
+        val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+            .createMediaSource(Uri.parse(url480))
+
+        player.prepare(mediaSource)
+        player_view.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+        player.playWhenReady = true
+        player.addListener(this)
     }
 
     fun setupHLS(){
-        player = SimpleExoPlayer.Builder(context).build()
+        //player = SimpleExoPlayer.Builder(context).build()
         player_view.player = player
 
         val dataSourceFactory =
@@ -304,6 +337,10 @@ class PleymePlayer @JvmOverloads constructor(
                     or View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
                     or View.SYSTEM_UI_FLAG_IMMERSIVE
         )
+    }
+
+    private fun isVisible(visible:Boolean) : Int{
+        return if(visible) View.VISIBLE else View.INVISIBLE
     }
 
     private fun showSystemUI() {

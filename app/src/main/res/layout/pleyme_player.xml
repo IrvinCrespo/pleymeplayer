@@ -42,7 +42,7 @@
                 android:id="@+id/live_tag"
                 android:layout_width="50dp"
                 android:layout_height="20dp"
-                android:visibility="visible"
+                android:visibility="invisible"
                 android:gravity="center_vertical"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="10dp"
