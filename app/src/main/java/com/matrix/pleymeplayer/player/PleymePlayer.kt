@@ -23,14 +23,13 @@ import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.matrix.pleymeplayer.R
 import com.matrix.pleymeplayer.player.util.TimeFormat
 import com.matrix.pleymeplayer.player.util.TimeObject
 import kotlinx.android.synthetic.main.pleyme_player.view.*
-
 
 
 @Suppress("IMPLICIT_CAST_TO_ANY")
@@ -263,7 +262,7 @@ class PleymePlayer @JvmOverloads constructor(
     
     fun setupMedia(){
         val dataSourceFactory = DefaultDataSourceFactory(
-            context,Util.getUserAgent(context,"peyme"))
+            context, Util.getUserAgent(context,"peyme"))
 
         val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
             .createMediaSource(Uri.parse(url480))
@@ -278,8 +277,10 @@ class PleymePlayer @JvmOverloads constructor(
         //player = SimpleExoPlayer.Builder(context).build()
         player_view.player = player
 
+        val bandwidthMeter =  DefaultBandwidthMeter();
+
         val dataSourceFactory =
-             DefaultHttpDataSourceFactory(Util.getUserAgent(context, "pleyme"))
+             DefaultDataSourceFactory(context, Util.getUserAgent(context, "pleyme") )
 
         val hlsMediaSource =
              HlsMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(url480))

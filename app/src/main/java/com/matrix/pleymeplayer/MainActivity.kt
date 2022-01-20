@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), PleymePlayerControlsListener {
 
-    var url480 = "https://d1anetxzb8te48.cloudfront.net/private/videos/streaming480/425c59d1-8687-414f-8ac5-bb8c4e919631/425c59d1-8687-414f-8ac5-bb8c4e919631.m3u8?Expires=1593975654&Signature=GLbl74atTcHhZ4I7GqzrtliJ6AQx7k~BFQXXQBC5SzGy-qcwPOo5D0BmVKILSqgjI1n2L2n8IyUsmnJu633DO~nKy5EdP8KxSUHzKo9IXZSnHvBku~WiIKpjaKgfHugLAR6G5LmEXNacuSKGDbVrK1QP9DK1612ouQLn5egk5QcRY1xUNGr0GuY~CVCQAYcjk8bsiqcHylhseGIr5svyXOrF~zJ6gp8siiYnh~3h1nI4qrzB6Z6aF2-Dk70keqQf9IuA7~jtMGCj~yWtcGp~YHCyozl1xegj~Helyig5H11moNDxgJRPyjX-cguAjlB8XhC7sldBj9RKbpceg~xlTA__&Key-Pair-Id=APKAJADXE67QLYOKBFZA"
+    var url480 = "https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8"
 
 
     @SuppressLint("SourceLockedOrientationActivity")
