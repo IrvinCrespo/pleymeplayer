@@ -43,6 +43,7 @@ You can play hls, dash or stream mp4 files from url. (Now it works just by url) 
 
 ## Example
 
+You can use properties programatically...
 
 ```kotlin
 
@@ -67,6 +68,8 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 }
 ```
+
+or in xml file
 
 ```xml
  <com.matrix.pleymeplayer.player.PleymePlayer
