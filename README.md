@@ -67,3 +67,14 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 }
 ```
+
+```xml
+ <com.matrix.pleymeplayer.player.PleymePlayer
+        android:id="@+id/player"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_width="match_parent"
+        app:showLiveTag="false"
+        android:layout_height="300dp"/>
+```
