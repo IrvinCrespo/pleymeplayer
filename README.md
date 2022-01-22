@@ -43,7 +43,7 @@ You can play hls, dash or stream mp4 files from url. (Now it works just by url) 
 
 ## Example
 
-You can use properties programatically...
+You can change properties programatically...
 
 ```kotlin
 
